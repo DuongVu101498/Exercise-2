@@ -15,4 +15,4 @@ RUN echo "$FTP_USER:$FTP_PWD" | chpasswd
 RUN echo "$FTP_USER" > /etc/vsftpd.userlist
 
 # Run the FTP server
-CMD ["bash","/sbin/service","vsftpd","start"]
+CMD ["/bin/bash","-c","/sbin/service","vsftpd","start"]
