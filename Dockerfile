@@ -1,14 +1,18 @@
 FROM ubuntu:20.04
 
-#install the ftp server
+# Install the ftp server
 RUN apt -y update
 RUN apt install -y vsftpd
 COPY vsftpd.conf /etc/
 
-#create local user
-RUN useradd -rm -d /home/${{ secrets.FTP_USER }} -s /bin/bash -g root -G sudo -u 1001 ${{ secrets.FTP_USER }}
-RUN echo "${{ secrets.FTP_USER }}:${{ secrets.FTP_PWD }}" | chpasswd
-RUN echo "${{ secrets.FTP_USER }}" > /etc/vsftpd.userlist
+# Default FTP user
+ARG FTP_USER=ubuntu
+ARG FTP_PWD=ubuntu
 
-#run the FTP server
+# Create local user
+RUN useradd -rm -d /home/$FTP_USER  -s /bin/bash -g root -G sudo -u 1001 $FTP_USER
+RUN echo "$FTP_USER:$FTP_PWD" | chpasswd
+RUN echo "$FTP_USER" > /etc/vsftpd.userlist
+
+# Run the FTP server
 CMD ["/sbin/service vsftpd","start"]
