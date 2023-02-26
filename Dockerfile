@@ -16,4 +16,4 @@ ARG FTP_PWD=ubuntu
 
 # add user after volume being mouthed
 # Run the FTP server
-CMD /bin/bash useradd -rm -d /home/$FTP_USER  -s /bin/bash -g root -G sudo -u 1001 $FTP_USER; echo "$FTP_USER:$FTP_PWD" | chpasswd ; echo "$FTP_USER" > /etc/vsftpd.userlist ; /bin/bash /sbin/service vsftpd start ; sleep infinity
+CMD /bin/bash ; useradd -rm -d /home/$FTP_USER  -s /bin/bash -g root -G sudo -u 1001 $FTP_USER; echo "$FTP_USER:$FTP_PWD" | chpasswd ; echo "$FTP_USER" > /etc/vsftpd.userlist ; /bin/bash /sbin/service vsftpd start ; sleep infinity
