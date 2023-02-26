@@ -8,13 +8,14 @@ COPY vsftpd.conf /etc/
 # Default FTP user
 ARG FTP_USER=ubuntu
 ARG FTP_PWD=ubuntu
-
+ENV FTP_USER=$FTP_USER
+ENV FTP_PWD=$FTP_PWD
 # Create local user
-RUN useradd -rm -d /home/$FTP_USER  -s /bin/bash -g root -G sudo -u 1001 $FTP_USER
-RUN echo "$FTP_USER:$FTP_PWD" | chpasswd
-RUN echo "$FTP_USER" > /etc/vsftpd.userlist
+#RUN useradd -rm -d /home/$FTP_USER  -s /bin/bash -g root -G sudo -u 1001 $FTP_USER
+#RUN echo "$FTP_USER:$FTP_PWD" | chpasswd
+#RUN echo "$FTP_USER" > /etc/vsftpd.userlist
 
 # add user after volume being mouthed
 # Run the FTP server
-#CMD /bin/bash ; useradd -rm -d /home/$FTP_USER  -s /bin/bash -g root -G sudo -u 1001 $FTP_USER; echo "$FTP_USER:$FTP_PWD" | chpasswd ; echo "$FTP_USER" > /etc/vsftpd.userlist ; /bin/bash /sbin/service vsftpd start ; sleep infinity
-CMD /bin/bash /sbin/service vsftpd start ; sleep infinity
+CMD useradd -rm -d /home/$FTP_USER  -s /bin/bash -g root -G sudo -u 1001 $FTP_USER; echo "$FTP_USER:$FTP_PWD" | chpasswd ; echo "$FTP_USER" > /etc/vsftpd.userlist ; /bin/bash /sbin/service vsftpd start ; sleep infinity
+#CMD /bin/bash /sbin/service vsftpd start ; sleep infinity
