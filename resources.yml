@@ -1,0 +1,88 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: ftp-pv
+  labels:
+    type: local
+    app: ftp
+spec:
+  storageClassName: ftp
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/home/ftp"
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ftp
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ftp-pv-claim
+  namespace: ftp
+  labels:
+    app: ftp
+spec:
+  storageClassName: ftp
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 500Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-ftp
+  namespace: ftp
+  labels:
+    app: ftp
+spec:
+  type: NodePort
+  ports:
+    - name: ftp
+      port: 21
+      targetPort: 21
+      nodePort: 30001
+    - name: pasv-ftp
+      port: 30002
+      targetPort: 30002
+      nodePort: 30002
+  selector:
+    app: ftp
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-ftp
+  namespace: ftp
+  labels:
+    app: ftp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ftp
+  template:
+    metadata:
+      labels:
+        app: ftp
+    spec:
+      containers:
+      - name: ftp
+        image: duongvt16/exe2-ftp:v1
+        imagePullPolicy: Always
+        volumeMounts:
+        - mountPath: "/home"
+          name: ftp
+        ports:
+        - containerPort: 21
+        - containerPort: 30002
+      volumes:
+      - name: ftp
+        persistentVolumeClaim:
+          claimName: ftp-pv-claim
